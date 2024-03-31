@@ -1,20 +1,15 @@
-import * as React from "react"
 import {
   ChakraProvider,
-  Box,
-  Text,
-  Link,
-  VStack,
-  Code,
   Grid,
-  theme,
+  // theme,
   GridItem,
 } from "@chakra-ui/react"
-import { ColorModeSwitcher } from "./ColorModeSwitcher"
-import { Logo } from "./Logo"
+
+import Sidebar from "./components/sidebar"
+import customTheme from "./theme"
 
 export const App = () => (
-  <ChakraProvider theme={theme}>
+  <ChakraProvider theme={customTheme}>
     <Grid
      templateAreas={`
         "header         header"
@@ -24,9 +19,10 @@ export const App = () => (
       gridTemplateColumns={'180px   1fr'}
     >
       <GridItem area={'header'} bg='orange.300'>
-         
       </GridItem>
-      <GridItem area={'sidebar'} bg='red.300'></GridItem>
+      <GridItem area={'sidebar'} bg='red.300'>
+        <Sidebar /> 
+      </GridItem>
       <GridItem area={'main'} bg='blue.300'></GridItem>
     </Grid>
   </ChakraProvider>
