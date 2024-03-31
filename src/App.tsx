@@ -8,31 +8,26 @@ import {
   Code,
   Grid,
   theme,
+  GridItem,
 } from "@chakra-ui/react"
 import { ColorModeSwitcher } from "./ColorModeSwitcher"
 import { Logo } from "./Logo"
 
 export const App = () => (
   <ChakraProvider theme={theme}>
-    <Box textAlign="center" fontSize="xl">
-      <Grid minH="100vh" p={3}>
-        <ColorModeSwitcher justifySelf="flex-end" />
-        <VStack spacing={8}>
-          <Logo h="40vmin" pointerEvents="none" />
-          <Text>
-            Edit <Code fontSize="xl">src/App.tsx</Code> and save to reload.
-          </Text>
-          <Link
-            color="teal.500"
-            href="https://chakra-ui.com"
-            fontSize="2xl"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn Chakra
-          </Link>
-        </VStack>
-      </Grid>
-    </Box>
+    <Grid
+     templateAreas={`
+        "header         header"
+        "sidebar        main"
+      `}
+      gridTemplateRows={'100px   calc(100vh - 100px)'}
+      gridTemplateColumns={'180px   1fr'}
+    >
+      <GridItem area={'header'} bg='orange.300'>
+         
+      </GridItem>
+      <GridItem area={'sidebar'} bg='red.300'></GridItem>
+      <GridItem area={'main'} bg='blue.300'></GridItem>
+    </Grid>
   </ChakraProvider>
 )
