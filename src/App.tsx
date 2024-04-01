@@ -1,29 +1,24 @@
+import * as React from "react"
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import {
   ChakraProvider,
-  Grid,
+  // Grid,
   // theme,
-  GridItem,
+  // GridItem,
 } from "@chakra-ui/react"
 
-import Sidebar from "./components/sidebar"
+import ShipmentsPage from "./shipments";
+
 import customTheme from "./theme"
 
-export const App = () => (
+export const App: React.FC = () => (
   <ChakraProvider theme={customTheme}>
-    <Grid
-     templateAreas={`
-        "header         header"
-        "sidebar        main"
-      `}
-      gridTemplateRows={'100px   calc(100vh - 100px)'}
-      gridTemplateColumns={'180px   1fr'}
-    >
-      <GridItem area={'header'} bg='orange.300'>
-      </GridItem>
-      <GridItem area={'sidebar'} bg='red.300'>
-        <Sidebar /> 
-      </GridItem>
-      <GridItem area={'main'} bg='blue.300'></GridItem>
-    </Grid>
+    <Router>
+      <Routes>
+        <Route path='/' element={<ShipmentsPage />} />
+        <Route path='/shipments' element={<ShipmentsPage />} />
+        {/* <Route path='/' element={<CarriersPage />} /> */}
+      </Routes>
+    </Router>
   </ChakraProvider>
 )
