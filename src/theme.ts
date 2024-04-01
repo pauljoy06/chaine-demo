@@ -1,16 +1,14 @@
 import { extendTheme } from '@chakra-ui/react';
 
 const customTheme = extendTheme({
-    colors: {
-        paul: {
-            light: '#f7fafc',
-            dark: '#333333',
-        },
-        grey: {
-            dark: '#4f545a',
-            light: '#868D98',
+    styles: {
+        global: {
+            'html, body': {
+                backgroundColor: 'gray.100',
+                color: 'gray.800',
+            }
         }
-    },
+    }
 });
 
 export default customTheme;
