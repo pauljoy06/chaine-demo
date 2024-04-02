@@ -6,7 +6,7 @@ import { Box } from "@chakra-ui/react"
 const Sidebar: React.FC = () => {
           
 
-    return <div className='sidebar'>
+    return <Box className='sidebar' h='100%' bg='white' boxShadow='sm'>
         <RouterLink to='/shipments'>
             <Box w='100%' p={4} color='black.500'>
                 Shipments
@@ -17,7 +17,7 @@ const Sidebar: React.FC = () => {
                 Carriers
             </Box>
         </RouterLink>
-    </div>
+    </Box>
 }
 
 export default Sidebar;

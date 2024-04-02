@@ -44,7 +44,7 @@ const ShipmentsPage: React.FC = () => {
             </GridItem>
             <GridItem area={'main'}>
                 <Box pl={5} pt={5}>
-                    <Heading as='h6' size='md'>Shipping</Heading>
+                    <Heading as='h1' size='md'>Shipping</Heading>
                 </Box>
                 <Flex className='page-top-row' pl={5} pt={5} pr={5}>
                     <InputGroup size='sm' maxW='250'>
