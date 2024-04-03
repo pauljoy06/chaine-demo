@@ -1,16 +1,20 @@
-import { Box, Card, CardBody, CardFooter, CardHeader, Divider, Flex, Heading, Icon, Spacer, Tag, TagLabel, Text } from "@chakra-ui/react";
+import { Box, Card, CardBody, CardFooter, CardHeader, Divider, Flex, Heading, Icon, IconButton, Spacer, Tag, TagLabel, Text } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 
 import { CarrierCardProps, FilterBoxProps, KeyValueProps, RatingsProps } from "../interfaces";
 
-const Ratings: React.FC<RatingsProps> = ({rating, maxRating = 5}) => {
-    return <Box>
-        {Array.from({ length: maxRating }, (_, index) => <Icon
-            as={StarIcon}
+const Ratings: React.FC<RatingsProps> = ({rating, setRating, maxRating = 5}) => {
+    return <Flex gap='2'>
+        {Array.from({ length: maxRating }, (_, index) => <IconButton
+            icon={<StarIcon />}
             key={index}
             color={index < rating ? 'yellow.400': 'gray.300' }
+            aria-label=''
+            colorScheme='white'
+            onClick={() => setRating(index + 1)}
+            size='lm'
         />)}
-    </Box>
+    </Flex>
 };
 
 const KeyValueBox: React.FC<KeyValueProps> = ({ title, value}) => {

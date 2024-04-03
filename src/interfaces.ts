@@ -1,6 +1,7 @@
 interface RatingsProps {
-    rating: number;
-    maxRating?: number;
+    rating: number,
+    maxRating?: number,
+    setRating: (rating: number) => void,
 }
 
 interface FilterBoxProps {

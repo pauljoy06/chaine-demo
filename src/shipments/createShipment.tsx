@@ -25,6 +25,7 @@ import {
     Icon,
     // SliderMark,
     useSlider,
+    RadioGroup,
 } from "@chakra-ui/react"
 
 import Sidebar from "../components/sidebar";
@@ -40,7 +41,10 @@ const CreateShipmentPage: React.FC = () => {
     const [page, setPage] = useState<number>(1);
     const [sliderValue, setSliderValue ] = useState<number>(100);
     // const [carrierRating, setCarrier]
-    const [specialRequirements, setSpecialRequirements] = useState<string[]>([]) 
+    const [specialRequirements, setSpecialRequirements] = useState<string[]>([]);
+    const [deliveryPercentage, setDeliveryPercentage] = useState<string>('90'); 
+    const [starRating, setStarRating] = useState<number>(0);
+    const [selectedCarrier, setSelectedCarrier] = useState<number | null>(null);
     
     const onCheckBoxClick = (value: string): void => {
         let index = specialRequirements.indexOf(value);
@@ -59,7 +63,7 @@ const CreateShipmentPage: React.FC = () => {
     const isChecked = (value: string): boolean => {
         return specialRequirements.includes(value)
     }
-    console.log('Slider', specialRequirements)
+    console.log('Slider', starRating)
 
     return <div className='create-shipment-page'>
         <Grid
@@ -107,27 +111,29 @@ const CreateShipmentPage: React.FC = () => {
                                 </FilterBox>
                                 <Spacer />
                                 <FilterBox title='Carrier Rating'>
-                                    <Ratings rating={0} />
+                                    <Ratings rating={starRating} setRating={setStarRating}/>
                                 </FilterBox>
                                 <Spacer />
                                 <FilterBox title='On-time Delivery %'>
-                                    <Stack>
-                                        <Radio size='md' name='1' colorScheme='blue'>
-                                            Radio
-                                        </Radio>
-                                        <Radio size='md' name='1' colorScheme='blue'>
-                                            Radio
-                                        </Radio>
-                                        <Radio size='md' name='1' colorScheme='blue' defaultChecked>
-                                            Radio
-                                        </Radio>
-                                        <Radio size='md' name='1' colorScheme='blue'>
-                                            Radio
-                                        </Radio>
-                                        <Radio size='md' name='1' colorScheme='blue'>
-                                            Radio
-                                        </Radio>
-                                    </Stack>
+                                    <RadioGroup onChange={setDeliveryPercentage}>
+                                        <Stack>
+                                            <Radio value='90' size='md' colorScheme='blue'>
+                                                {'>  90'}
+                                            </Radio>
+                                            <Radio value='80' size='md' colorScheme='blue'>
+                                                {'>  80'}
+                                            </Radio>
+                                            <Radio value='70' size='md' colorScheme='blue'>
+                                                {'>  70'}
+                                            </Radio>
+                                            <Radio value='60' size='md' name='1' colorScheme='blue'>
+                                                {'>  60'}
+                                            </Radio>
+                                            <Radio value='0' size='md' name='1' colorScheme='blue'>
+                                                {'All values'}
+                                            </Radio>
+                                        </Stack>
+                                    </RadioGroup>
                                 </FilterBox>
                                 <Spacer />
                                 <FilterBox title='Requirements'>
