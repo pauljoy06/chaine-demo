@@ -35,6 +35,8 @@ import {
     ModalFooter,
     useDisclosure,
 } from "@chakra-ui/react"
+import { useNavigate } from 'react-router-dom';
+
 
 import Sidebar from "../components/sidebar";
 import Header from "../components/header";
@@ -47,11 +49,13 @@ import { APIGetCarriers, Carrier } from "../interfaces";
 // import { FaTruck } from "react-icons/fa6";
 
 const CreateShipmentPage: React.FC = () => {
+
     let today = new Date();
     let year = today.getFullYear();
     let month = today.getMonth() + 1;
     let date = today.getDate();
 
+    const navigate = useNavigate();
     const [page, setPage] = useState<number>(1);
     const [sliderValue, setSliderValue] = useState<number>(10000);
     const [specialRequirements, setSpecialRequirements] = useState<string[]>([]);
@@ -97,6 +101,12 @@ const CreateShipmentPage: React.FC = () => {
         } else {
             setSelectedCarrier(carrier);
         }
+    }
+
+    const onModelClose = (): void => {
+        console.log('On model close')
+        navigate(`/shipments`)
+        onClose();
     }
 
     useEffect(() => {
@@ -343,7 +353,7 @@ const CreateShipmentPage: React.FC = () => {
                         </Box>
                     </Flex>
                 </Box>}
-                <Modal onClose={onClose} size='lg' isOpen={isOpen}>
+                <Modal onClose={onModelClose} size='lg' isOpen={isOpen}>
                     <ModalOverlay />
                     <ModalContent>
                         <ModalCloseButton />
@@ -354,7 +364,7 @@ const CreateShipmentPage: React.FC = () => {
                             </Flex>
                         </ModalBody>
                         <ModalFooter>
-                            <Button onClick={onClose}>Close</Button>
+                            <Button onClick={onModelClose}>Close</Button>
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
