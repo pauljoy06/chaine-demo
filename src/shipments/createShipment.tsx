@@ -40,14 +40,17 @@ import { APIGetCarriers, Carrier } from "../interfaces";
 
 const CreateShipmentPage: React.FC = () => {
     const [page, setPage] = useState<number>(1);
-    const [sliderValue, setSliderValue ] = useState<number>(100);
+    const [sliderValue, setSliderValue ] = useState<number>(10000);
     // const [carrierRating, setCarrier]
     const [specialRequirements, setSpecialRequirements] = useState<string[]>([]);
-    const [deliveryPercentage, setDeliveryPercentage] = useState<string>('90'); 
+    const [deliveryPercentage, setDeliveryPercentage] = useState<string>('0'); 
     const [starRating, setStarRating] = useState<number>(0);
     
     const [carriers, setCarriers] = useState<Carrier[]>([]);
     const [selectedCarrier, setSelectedCarrier] = useState<Carrier | null>(null);
+    const [filteredCarriers, setFilteredCarriers] = useState<Carrier[]>([]);
+
+
     const onCheckBoxClick = (value: string): void => {
         let index = specialRequirements.indexOf(value);
         if(index != -1) {
@@ -87,6 +90,7 @@ const CreateShipmentPage: React.FC = () => {
                 }
                 const data: APIGetCarriers = await response.json();
                 setCarriers(data['carriers']);
+                setFilteredCarriers(data['carriers']);
             } catch (error) {
                 console.error('There was a problem with the fetch operation:', error);
             }
@@ -94,7 +98,19 @@ const CreateShipmentPage: React.FC = () => {
 
         getAllCarriers();
     }, []);
-    console.log('Slider', starRating)
+
+    useEffect(() => {
+        let tempList = carriers
+            .filter(carrier => (carrier.onTimeDeliveryPercentage*100) > parseInt(deliveryPercentage))
+            .filter(carrier => carrier.rating > starRating)
+            .filter(carrier => carrier.cost < sliderValue)
+            .filter(carrier =>
+                carrier.specialRequirements.some(req => specialRequirements.includes(req))
+            );
+
+        setFilteredCarriers(tempList);
+        console.log(specialRequirements, carriers.map(carrier => carrier.specialRequirements))
+    }, [deliveryPercentage, starRating, sliderValue, specialRequirements]);
 
     return <div className='create-shipment-page'>
         <Grid
@@ -120,7 +136,11 @@ const CreateShipmentPage: React.FC = () => {
                         <HStack pt='5'>
                             <Input placeholder='Pickup' maxW='250px' bg='white' />
                             <Input placeholder='Destination' maxW='250px' bg='white' />
-                            <Input placeholder='Pickup Date' type='date' maxW='250px' bg='white' />
+                            <Input placeholder='Pickup Date'
+                                type='date'
+                                maxW='250px'
+                                bg='white'
+                            />
                         </HStack>
                         <Flex className='carrier-listing-filters' flexGrow='1' gap='3' mt='15px' mr='15px' mb='15px'>
                             <Flex className='filters' direction='column' flexGrow='1' w='15%' borderRadius='10px'>
@@ -170,14 +190,31 @@ const CreateShipmentPage: React.FC = () => {
                                 <FilterBox title='Requirements'>
                                     <CheckboxGroup colorScheme='blue' defaultValue={['naruto', 'kakashi']}>
                                         <Stack spacing={[1, 5]}>
-                                            <Checkbox isChecked={isChecked('oversize')}
-                                                onChange={() => onCheckBoxClick('oversize')}
-                                                value='oversize'
+                                            <Checkbox isChecked={isChecked('Oversized Loads')}
+                                                onChange={() => onCheckBoxClick('Oversized Loads')}
+                                                value='Oversized Loads'
                                             >
                                                 Oversized Loads
                                             </Checkbox>
-                                            <Checkbox value='sasuke'>Sasuke</Checkbox>
-                                            <Checkbox value='kakashi'>Kakashi</Checkbox>
+                                            <Checkbox isChecked={isChecked('Refrigerated')}
+                                                onChange={() => onCheckBoxClick('Refrigerated')}
+                                                value='Refrigerated'
+                                            >
+                                                Refridgerated
+                                                
+                                            </Checkbox>
+                                            <Checkbox isChecked={isChecked('Eco-Friendly')}
+                                                onChange={() => onCheckBoxClick('Eco-Friendly')}
+                                                value='Eco-Friendly'
+                                            >
+                                                Eco-Friendly
+                                            </Checkbox>
+                                            <Checkbox isChecked={isChecked('Hazardous Materials')}
+                                                onChange={() => onCheckBoxClick('Hazardous Materials')}
+                                                value='Hazardous Materials'
+                                            >
+                                                Hazardous Materials
+                                            </Checkbox>
                                         </Stack>
                                     </CheckboxGroup>
                                 </FilterBox>
@@ -197,7 +234,7 @@ const CreateShipmentPage: React.FC = () => {
                             <Box className='carrier-results' p='45px' w='85%' bg='white' borderRadius='10px'>
                                 <Heading as='h1' size='md'>Carriers</Heading>
                                 <Flex className='carriers' wrap='wrap' gap='7' mt='30px'>
-                                    {carriers.map(carrier => <CarrierCard
+                                    {filteredCarriers.map(carrier => <CarrierCard
                                         name={carrier.name}
                                         rating={carrier.rating}
                                         onTimeDeliveryPercentage={carrier.onTimeDeliveryPercentage}
