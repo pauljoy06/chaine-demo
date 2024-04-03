@@ -39,12 +39,20 @@ import { APIGetCarriers, Carrier } from "../interfaces";
 // import { FaTruck } from "react-icons/fa6";
 
 const CreateShipmentPage: React.FC = () => {
+    let today = new Date();
+    let year = today.getFullYear();
+    let month = today.getMonth() + 1;
+    let date = today.getDate();
+
     const [page, setPage] = useState<number>(1);
     const [sliderValue, setSliderValue ] = useState<number>(10000);
-    // const [carrierRating, setCarrier]
     const [specialRequirements, setSpecialRequirements] = useState<string[]>([]);
     const [deliveryPercentage, setDeliveryPercentage] = useState<string>('0'); 
     const [starRating, setStarRating] = useState<number>(0);
+
+    const [pickup, setPickup] = useState<string>('');
+    const [destination, setDestination] = useState<string>('');
+    const [shippingDate, setShippingDate] = useState<string>(`${year}-${month.toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`);
     
     const [carriers, setCarriers] = useState<Carrier[]>([]);
     const [selectedCarrier, setSelectedCarrier] = useState<Carrier | null>(null);
@@ -112,6 +120,8 @@ const CreateShipmentPage: React.FC = () => {
         console.log(specialRequirements, carriers.map(carrier => carrier.specialRequirements))
     }, [deliveryPercentage, starRating, sliderValue, specialRequirements]);
 
+    console.log('Sele', shippingDate);
+
     return <div className='create-shipment-page'>
         <Grid
             templateAreas={`
@@ -128,128 +138,134 @@ const CreateShipmentPage: React.FC = () => {
                 <Sidebar />
             </GridItem>
             <GridItem area='main' pl='5'>
-                {page == 1 && <>
-                    <Flex className='carriers-filters' direction='column' h='100%'>
-                        <Box pl={5} pt={5}>
-                            <Heading as='h1' size='md'>Add Shipment</Heading>
-                        </Box>
-                        <HStack pt='5'>
-                            <Input placeholder='Pickup' maxW='250px' bg='white' />
-                            <Input placeholder='Destination' maxW='250px' bg='white' />
-                            <Input placeholder='Pickup Date'
-                                type='date'
-                                maxW='250px'
-                                bg='white'
-                            />
-                        </HStack>
-                        <Flex className='carrier-listing-filters' flexGrow='1' gap='3' mt='15px' mr='15px' mb='15px'>
-                            <Flex className='filters' direction='column' flexGrow='1' w='15%' borderRadius='10px'>
-                                <FilterBox title='Cost'>
-                                    <Slider 
-                                        value={sliderValue}
-                                        onChange={(v) => setSliderValue(v)}
-                                        min={0}
-                                        max={10000}
-                                        step={100}
-                                        defaultValue={100}
-                                        aria-label='slider-ex-1'
-                                    >
-                                        <SliderTrack>
-                                            <SliderFilledTrack />
-                                        </SliderTrack>
-                                        <SliderThumb />
-                                    </Slider>
-                                </FilterBox>
-                                <Spacer />
-                                <FilterBox title='Carrier Rating'>
-                                    <Ratings rating={starRating} setRating={setStarRating}/>
-                                </FilterBox>
-                                <Spacer />
-                                <FilterBox title='On-time Delivery %'>
-                                    <RadioGroup onChange={setDeliveryPercentage}>
-                                        <Stack>
-                                            <Radio value='90' size='md' colorScheme='blue'>
-                                                {'>  90'}
-                                            </Radio>
-                                            <Radio value='80' size='md' colorScheme='blue'>
-                                                {'>  80'}
-                                            </Radio>
-                                            <Radio value='70' size='md' colorScheme='blue'>
-                                                {'>  70'}
-                                            </Radio>
-                                            <Radio value='60' size='md' name='1' colorScheme='blue'>
-                                                {'>  60'}
-                                            </Radio>
-                                            <Radio value='0' size='md' name='1' colorScheme='blue'>
-                                                {'All values'}
-                                            </Radio>
-                                        </Stack>
-                                    </RadioGroup>
-                                </FilterBox>
-                                <Spacer />
-                                <FilterBox title='Requirements'>
-                                    <CheckboxGroup colorScheme='blue' defaultValue={['naruto', 'kakashi']}>
-                                        <Stack spacing={[1, 5]}>
-                                            <Checkbox isChecked={isChecked('Oversized Loads')}
-                                                onChange={() => onCheckBoxClick('Oversized Loads')}
-                                                value='Oversized Loads'
-                                            >
-                                                Oversized Loads
-                                            </Checkbox>
-                                            <Checkbox isChecked={isChecked('Refrigerated')}
-                                                onChange={() => onCheckBoxClick('Refrigerated')}
-                                                value='Refrigerated'
-                                            >
-                                                Refridgerated
-                                                
-                                            </Checkbox>
-                                            <Checkbox isChecked={isChecked('Eco-Friendly')}
-                                                onChange={() => onCheckBoxClick('Eco-Friendly')}
-                                                value='Eco-Friendly'
-                                            >
-                                                Eco-Friendly
-                                            </Checkbox>
-                                            <Checkbox isChecked={isChecked('Hazardous Materials')}
-                                                onChange={() => onCheckBoxClick('Hazardous Materials')}
-                                                value='Hazardous Materials'
-                                            >
-                                                Hazardous Materials
-                                            </Checkbox>
-                                        </Stack>
-                                    </CheckboxGroup>
-                                </FilterBox>
-                                <Box mt='20px'>
-                                    <Button
-                                        isDisabled={false}
-                                        w='100%'
-                                        colorScheme='green'
-                                        size='lg'
-                                        onClick={e => setPage(2)}
-                                    >
-                                        Next
-                                    </Button>
-                                </Box>
-                            </Flex>
+                {page == 1 && <Flex className='carriers-filters' direction='column' h='100%'>
+                    <Box pl={5} pt={5}>
+                        <Heading as='h1' size='md'>Add Shipment</Heading>
+                    </Box>
+                    <HStack pt='5'>
+                        <Input placeholder='Pickup' maxW='250px' bg='white'
+                            value={pickup}
+                            onChange={e => setPickup(e.target.value)}
+                         />
+                        <Input placeholder='Destination' maxW='250px' bg='white'
+                            value={destination}
+                            onChange={e => setDestination(e.target.value)}
+                         />
+                        <Input placeholder='Pickup Date'
+                            type='date'
+                            maxW='250px'
+                            bg='white'
+                            value={shippingDate}
+                            onChange={e => setShippingDate(e.target.value)}
+                        />
+                    </HStack>
+                    <Flex className='carrier-listing-filters' flexGrow='1' gap='3' mt='15px' mr='15px' mb='15px'>
+                        <Flex className='filters' direction='column' flexGrow='1' w='15%' borderRadius='10px'>
+                            <FilterBox title='Cost'>
+                                <Slider 
+                                    value={sliderValue}
+                                    onChange={(v) => setSliderValue(v)}
+                                    min={0}
+                                    max={10000}
+                                    step={100}
+                                    defaultValue={100}
+                                    aria-label='slider-ex-1'
+                                >
+                                    <SliderTrack>
+                                        <SliderFilledTrack />
+                                    </SliderTrack>
+                                    <SliderThumb />
+                                </Slider>
+                            </FilterBox>
                             <Spacer />
-                            <Box className='carrier-results' p='45px' w='85%' bg='white' borderRadius='10px'>
-                                <Heading as='h1' size='md'>Carriers</Heading>
-                                <Flex className='carriers' wrap='wrap' gap='7' mt='30px'>
-                                    {filteredCarriers.map(carrier => <CarrierCard
-                                        name={carrier.name}
-                                        rating={carrier.rating}
-                                        onTimeDeliveryPercentage={carrier.onTimeDeliveryPercentage}
-                                        cost={carrier.cost}
-                                        specialRequirements={carrier.specialRequirements}
-                                        availability={carrier.availability}
-                                        isSelected={isCardSelected(carrier.id)}
-                                        onClick={onCardClick}
-                                        carrier={carrier}
-                                    />)}                                    
-                                </Flex>
+                            <FilterBox title='Carrier Rating'>
+                                <Ratings rating={starRating} setRating={setStarRating}/>
+                            </FilterBox>
+                            <Spacer />
+                            <FilterBox title='On-time Delivery %'>
+                                <RadioGroup onChange={setDeliveryPercentage}>
+                                    <Stack>
+                                        <Radio value='90' size='md' colorScheme='blue'>
+                                            {'>  90'}
+                                        </Radio>
+                                        <Radio value='80' size='md' colorScheme='blue'>
+                                            {'>  80'}
+                                        </Radio>
+                                        <Radio value='70' size='md' colorScheme='blue'>
+                                            {'>  70'}
+                                        </Radio>
+                                        <Radio value='60' size='md' name='1' colorScheme='blue'>
+                                            {'>  60'}
+                                        </Radio>
+                                        <Radio value='0' size='md' name='1' colorScheme='blue'>
+                                            {'All values'}
+                                        </Radio>
+                                    </Stack>
+                                </RadioGroup>
+                            </FilterBox>
+                            <Spacer />
+                            <FilterBox title='Requirements'>
+                                <CheckboxGroup colorScheme='blue' defaultValue={['naruto', 'kakashi']}>
+                                    <Stack spacing={[1, 5]}>
+                                        <Checkbox isChecked={isChecked('Oversized Loads')}
+                                            onChange={() => onCheckBoxClick('Oversized Loads')}
+                                            value='Oversized Loads'
+                                        >
+                                            Oversized Loads
+                                        </Checkbox>
+                                        <Checkbox isChecked={isChecked('Refrigerated')}
+                                            onChange={() => onCheckBoxClick('Refrigerated')}
+                                            value='Refrigerated'
+                                        >
+                                            Refridgerated
+                                            
+                                        </Checkbox>
+                                        <Checkbox isChecked={isChecked('Eco-Friendly')}
+                                            onChange={() => onCheckBoxClick('Eco-Friendly')}
+                                            value='Eco-Friendly'
+                                        >
+                                            Eco-Friendly
+                                        </Checkbox>
+                                        <Checkbox isChecked={isChecked('Hazardous Materials')}
+                                            onChange={() => onCheckBoxClick('Hazardous Materials')}
+                                            value='Hazardous Materials'
+                                        >
+                                            Hazardous Materials
+                                        </Checkbox>
+                                    </Stack>
+                                </CheckboxGroup>
+                            </FilterBox>
+                            <Box mt='20px'>
+                                <Button
+                                    isDisabled={selectedCarrier ? false : true}
+                                    w='100%'
+                                    colorScheme='green'
+                                    size='lg'
+                                    onClick={e => setPage(2)}
+                                >
+                                    Next
+                                </Button>
                             </Box>
                         </Flex>
+                        <Spacer />
+                        <Box className='carrier-results' p='45px' w='85%' bg='white' borderRadius='10px'>
+                            <Heading as='h1' size='md'>Carriers</Heading>
+                            <Flex className='carriers' wrap='wrap' gap='7' mt='30px'>
+                                {filteredCarriers.map(carrier => <CarrierCard
+                                    name={carrier.name}
+                                    rating={carrier.rating}
+                                    onTimeDeliveryPercentage={carrier.onTimeDeliveryPercentage}
+                                    cost={carrier.cost}
+                                    specialRequirements={carrier.specialRequirements}
+                                    availability={carrier.availability}
+                                    isSelected={isCardSelected(carrier.id)}
+                                    onClick={onCardClick}
+                                    carrier={carrier}
+                                />)}                                    
+                            </Flex>
+                        </Box>
                     </Flex>
-                </>}
+                </Flex>}
                 {page == 2 && <Box>
                     <Heading mt='20px'>
                         <Flex gap='4'>
@@ -264,7 +280,7 @@ const CreateShipmentPage: React.FC = () => {
                     </Heading>
                     <Flex maxW='900px' mt='50px' bg='white' borderRadius='10px'>
                         <Box className='shipping-details' flexGrow='3' pt='50px' pl='50px' pb='50px' borderRight='1px' borderColor='gray.100'>
-                            <Text fontSize='xl' fontWeight='bold'>Transit Logistics</Text>
+                            <Text fontSize='xl' fontWeight='bold'>{selectedCarrier?.name}</Text>
                             <Flex pt='15px' pb='15px' pr='20px' borderTop='1px' borderBottom='1px' borderRight='1px' borderColor='gray.100'>
                                 <Flex className='pickup-details' direction='column' gap='2'>
                                     <Text color='gray.500' fontSize='2xs' fontWeight='bold'>Starting at</Text>
