@@ -26,6 +26,14 @@ import {
     // SliderMark,
     useSlider,
     RadioGroup,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalCloseButton,
+    ModalBody,
+    ModalFooter,
+    useDisclosure,
 } from "@chakra-ui/react"
 
 import Sidebar from "../components/sidebar";
@@ -33,7 +41,7 @@ import Header from "../components/header";
 import React, { useEffect, useState } from "react";
 import { CarrierCard, FilterBox, Ratings } from "../components";
 
-import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
+import { ArrowBackIcon, ArrowForwardIcon, CheckCircleIcon } from "@chakra-ui/icons";
 import { APIGetCarriers, Carrier } from "../interfaces";
 // import { PiTruckThin } from "react-icons/pi";
 // import { FaTruck } from "react-icons/fa6";
@@ -45,23 +53,25 @@ const CreateShipmentPage: React.FC = () => {
     let date = today.getDate();
 
     const [page, setPage] = useState<number>(1);
-    const [sliderValue, setSliderValue ] = useState<number>(10000);
+    const [sliderValue, setSliderValue] = useState<number>(10000);
     const [specialRequirements, setSpecialRequirements] = useState<string[]>([]);
-    const [deliveryPercentage, setDeliveryPercentage] = useState<string>('0'); 
+    const [deliveryPercentage, setDeliveryPercentage] = useState<string>('0');
     const [starRating, setStarRating] = useState<number>(0);
 
-    const [pickup, setPickup] = useState<string>('');
-    const [destination, setDestination] = useState<string>('');
+    const [pickup, setPickup] = useState<string>('Springfield, NA');
+    const [destination, setDestination] = useState<string>('San Jose, CA');
     const [shippingDate, setShippingDate] = useState<string>(`${year}-${month.toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`);
-    
+
     const [carriers, setCarriers] = useState<Carrier[]>([]);
     const [selectedCarrier, setSelectedCarrier] = useState<Carrier | null>(null);
     const [filteredCarriers, setFilteredCarriers] = useState<Carrier[]>([]);
+    
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
 
     const onCheckBoxClick = (value: string): void => {
         let index = specialRequirements.indexOf(value);
-        if(index != -1) {
+        if (index != -1) {
             setSpecialRequirements(old => {
                 let returnValue = old;
                 returnValue.splice(index, 1)
@@ -82,7 +92,7 @@ const CreateShipmentPage: React.FC = () => {
     }
 
     const onCardClick = (carrier: Carrier): void => {
-        if(selectedCarrier?.id === carrier.id) {
+        if (selectedCarrier?.id === carrier.id) {
             setSelectedCarrier(null);
         } else {
             setSelectedCarrier(carrier);
@@ -109,7 +119,7 @@ const CreateShipmentPage: React.FC = () => {
 
     useEffect(() => {
         let tempList = carriers
-            .filter(carrier => (carrier.onTimeDeliveryPercentage*100) > parseInt(deliveryPercentage))
+            .filter(carrier => (carrier.onTimeDeliveryPercentage * 100) > parseInt(deliveryPercentage))
             .filter(carrier => carrier.rating > starRating)
             .filter(carrier => carrier.cost < sliderValue)
             .filter(carrier =>
@@ -146,23 +156,26 @@ const CreateShipmentPage: React.FC = () => {
                         <Input placeholder='Pickup' maxW='250px' bg='white'
                             value={pickup}
                             onChange={e => setPickup(e.target.value)}
-                         />
+                            isRequired
+                        />
                         <Input placeholder='Destination' maxW='250px' bg='white'
                             value={destination}
                             onChange={e => setDestination(e.target.value)}
-                         />
+                            isRequired
+                        />
                         <Input placeholder='Pickup Date'
                             type='date'
                             maxW='250px'
                             bg='white'
                             value={shippingDate}
                             onChange={e => setShippingDate(e.target.value)}
+                            isRequired
                         />
                     </HStack>
                     <Flex className='carrier-listing-filters' flexGrow='1' gap='3' mt='15px' mr='15px' mb='15px'>
                         <Flex className='filters' direction='column' flexGrow='1' w='15%' borderRadius='10px'>
                             <FilterBox title='Cost'>
-                                <Slider 
+                                <Slider
                                     value={sliderValue}
                                     onChange={(v) => setSliderValue(v)}
                                     min={0}
@@ -179,7 +192,7 @@ const CreateShipmentPage: React.FC = () => {
                             </FilterBox>
                             <Spacer />
                             <FilterBox title='Carrier Rating'>
-                                <Ratings rating={starRating} setRating={setStarRating}/>
+                                <Ratings rating={starRating} setRating={setStarRating} />
                             </FilterBox>
                             <Spacer />
                             <FilterBox title='On-time Delivery %'>
@@ -218,7 +231,7 @@ const CreateShipmentPage: React.FC = () => {
                                             value='Refrigerated'
                                         >
                                             Refridgerated
-                                            
+
                                         </Checkbox>
                                         <Checkbox isChecked={isChecked('Eco-Friendly')}
                                             onChange={() => onCheckBoxClick('Eco-Friendly')}
@@ -261,7 +274,7 @@ const CreateShipmentPage: React.FC = () => {
                                     isSelected={isCardSelected(carrier.id)}
                                     onClick={onCardClick}
                                     carrier={carrier}
-                                />)}                                    
+                                />)}
                             </Flex>
                         </Box>
                     </Flex>
@@ -284,7 +297,7 @@ const CreateShipmentPage: React.FC = () => {
                             <Flex pt='15px' pb='15px' pr='20px' borderTop='1px' borderBottom='1px' borderRight='1px' borderColor='gray.100'>
                                 <Flex className='pickup-details' direction='column' gap='2'>
                                     <Text color='gray.500' fontSize='2xs' fontWeight='bold'>Starting at</Text>
-                                    <Text fontWeight='bold'>Springfield</Text>
+                                    <Text fontWeight='bold'>{pickup}</Text>
                                     <Text color='gray.500' fontSize='xs' fontWeight='bold'>on Apr 2, 2024</Text>
                                 </Flex>
                                 <Flex position='relative' flexGrow='1' padding='10' alignItems='center'>
@@ -295,28 +308,40 @@ const CreateShipmentPage: React.FC = () => {
                                 </Flex>
                                 <Flex className='delivery-details' direction='column' gap='2'>
                                     <Text color='gray.500' fontSize='2xs' fontWeight='bold'>Delivery at</Text>
-                                    <Text fontWeight='bold'>Springfield</Text>
-                                    <Text color='gray.500' fontSize='xs' fontWeight='bold'>on Apr 2, 2024</Text>
+                                    <Text fontWeight='bold'>{destination}</Text>
+                                    <Text color='gray.500' fontSize='xs' fontWeight='bold'>NA</Text>
                                 </Flex>
                             </Flex>
-                            <Box>
+                            <Box mt='20px'>
                                 <Text>Full load container</Text>
                             </Box>
                         </Box>
                         <Box className='total-confirmation' flexGrow='1' mt='auto' mb='auto' pl='15px' pr='15px'>
                             <Flex direction='column'>
                                 <Text ml='auto' mr='auto' fontSize='xs' fontWeight='bold' color='grey.500'>Total Cost</Text>
-                                <Text ml='auto' mr='auto'fontSize='lg' fontWeight='bold'>2400</Text>
-                                <Button mt='15px' colorScheme='green'>
+                                <Text ml='auto' mr='auto' fontSize='lg' fontWeight='bold'>{selectedCarrier?.cost}</Text>
+                                <Button mt='15px' colorScheme='green' onClick={onOpen}>
                                     Confirm Booking
                                 </Button>
                             </Flex>
                         </Box>
                     </Flex>
                 </Box>}
-                {page == 3 && <>
-
-                </>}
+                <Modal onClose={onClose} size='lg' isOpen={isOpen}>
+                    <ModalOverlay />
+                    <ModalContent>
+                        <ModalCloseButton />
+                        <ModalBody>
+                            <Flex direction={'column'}  justify='center' align='center' mt='10'>
+                                <CheckCircleIcon boxSize={20} color='green' /> 
+                                <Text mt={5} color='green' fontWeight='bold'>Booking Confirmed</Text>
+                            </Flex>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button onClick={onClose}>Close</Button>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
             </GridItem>
         </Grid>
     </div>
