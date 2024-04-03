@@ -18,9 +18,24 @@ interface KeyValueProps {
     value: string,
 }
 
+interface Carrier {
+    id: number,
+    rating: number,
+    onTimeDeliveryPercentage: number,
+    cost: number,
+    specialRequirements: string[],
+    availability: boolean,
+}
+
+interface APIGetCarriers {
+    carriers: Carrier[],
+}
+
 export type {
+    Carrier,
     RatingsProps,
     FilterBoxProps,
     CarrierCardProps,
     KeyValueProps,
+    APIGetCarriers,
 }

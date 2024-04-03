@@ -30,10 +30,11 @@ import {
 
 import Sidebar from "../components/sidebar";
 import Header from "../components/header";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CarrierCard, FilterBox, Ratings } from "../components";
 
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
+import { APIGetCarriers, Carrier } from "../interfaces";
 // import { PiTruckThin } from "react-icons/pi";
 // import { FaTruck } from "react-icons/fa6";
 
@@ -44,8 +45,9 @@ const CreateShipmentPage: React.FC = () => {
     const [specialRequirements, setSpecialRequirements] = useState<string[]>([]);
     const [deliveryPercentage, setDeliveryPercentage] = useState<string>('90'); 
     const [starRating, setStarRating] = useState<number>(0);
-    const [selectedCarrier, setSelectedCarrier] = useState<number | null>(null);
     
+    const [carriers, setCarriers] = useState<Carrier[]>([]);
+    const [selectedCarrier, setSelectedCarrier] = useState<number | null>(null);
     const onCheckBoxClick = (value: string): void => {
         let index = specialRequirements.indexOf(value);
         if(index != -1) {
@@ -63,6 +65,23 @@ const CreateShipmentPage: React.FC = () => {
     const isChecked = (value: string): boolean => {
         return specialRequirements.includes(value)
     }
+
+    useEffect(() => {
+        const getAllCarriers = async () => {
+            try {
+                const response = await fetch('https://mocki.io/v1/b174654c-dc79-4ca9-9be3-976a206e145c');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data: APIGetCarriers = await response.json();
+                setCarriers(data['carriers']);
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            }
+        }
+
+        getAllCarriers();
+    }, []);
     console.log('Slider', starRating)
 
     return <div className='create-shipment-page'>
