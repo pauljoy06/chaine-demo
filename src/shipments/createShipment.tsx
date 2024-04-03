@@ -23,7 +23,7 @@ import {
     Divider,
     AbsoluteCenter,
     Icon,
-    // SliderMark,
+    SliderMark,
     useSlider,
     RadioGroup,
     Modal,
@@ -121,16 +121,19 @@ const CreateShipmentPage: React.FC = () => {
         let tempList = carriers
             .filter(carrier => (carrier.onTimeDeliveryPercentage * 100) > parseInt(deliveryPercentage))
             .filter(carrier => carrier.rating > starRating)
-            .filter(carrier => carrier.cost < sliderValue)
-            .filter(carrier =>
+            .filter(carrier => carrier.cost < sliderValue);
+        
+        if (specialRequirements.length > 0) {
+           tempList = tempList.filter(carrier =>
                 carrier.specialRequirements.some(req => specialRequirements.includes(req))
             );
+        }
 
         setFilteredCarriers(tempList);
         console.log(specialRequirements, carriers.map(carrier => carrier.specialRequirements))
     }, [deliveryPercentage, starRating, sliderValue, specialRequirements]);
 
-    console.log('Sele', shippingDate);
+    console.log('Sele', sliderValue, deliveryPercentage, starRating);
 
     return <div className='create-shipment-page'>
         <Grid
@@ -179,11 +182,24 @@ const CreateShipmentPage: React.FC = () => {
                                     value={sliderValue}
                                     onChange={(v) => setSliderValue(v)}
                                     min={0}
-                                    max={10000}
+                                    max={2000}
                                     step={100}
                                     defaultValue={100}
                                     aria-label='slider-ex-1'
                                 >
+                                    <SliderMark
+                                        value={sliderValue}
+                                        textAlign='center'
+                                        bg='blue.500'
+                                        color='white'
+                                        mt='-10'
+                                        ml='-5'
+                                        pl='1'
+                                        pr='1'
+                                        borderRadius={10}
+                                    >
+                                      ${sliderValue}
+                                    </SliderMark>
                                     <SliderTrack>
                                         <SliderFilledTrack />
                                     </SliderTrack>
