@@ -24,14 +24,7 @@ import {
     AbsoluteCenter,
     Icon,
     // SliderMark,
-    // Heading,
-
-    // Input,
-    // InputGroup,
-    // InputLeftAddon,
-    // Button,
-    // Flex,
-    // Spacer,
+    useSlider,
 } from "@chakra-ui/react"
 
 import Sidebar from "../components/sidebar";
@@ -44,7 +37,29 @@ import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 // import { FaTruck } from "react-icons/fa6";
 
 const CreateShipmentPage: React.FC = () => {
-    const [page, setPage] = useState<number>(2);
+    const [page, setPage] = useState<number>(1);
+    const [sliderValue, setSliderValue ] = useState<number>(100);
+    // const [carrierRating, setCarrier]
+    const [specialRequirements, setSpecialRequirements] = useState<string[]>([]) 
+    
+    const onCheckBoxClick = (value: string): void => {
+        let index = specialRequirements.indexOf(value);
+        if(index != -1) {
+            setSpecialRequirements(old => {
+                let returnValue = old;
+                returnValue.splice(index, 1)
+
+                return returnValue;
+            })
+        } else {
+            setSpecialRequirements([...specialRequirements, value]);
+        }
+    }
+
+    const isChecked = (value: string): boolean => {
+        return specialRequirements.includes(value)
+    }
+    console.log('Slider', specialRequirements)
 
     return <div className='create-shipment-page'>
         <Grid
@@ -75,7 +90,15 @@ const CreateShipmentPage: React.FC = () => {
                         <Flex className='carrier-listing-filters' flexGrow='1' gap='3' mt='15px' mr='15px' mb='15px'>
                             <Flex className='filters' direction='column' flexGrow='1' w='15%' borderRadius='10px'>
                                 <FilterBox title='Cost'>
-                                    <Slider aria-label='slider-ex-1' defaultValue={30}>
+                                    <Slider 
+                                        value={sliderValue}
+                                        onChange={(v) => setSliderValue(v)}
+                                        min={0}
+                                        max={10000}
+                                        step={100}
+                                        defaultValue={100}
+                                        aria-label='slider-ex-1'
+                                    >
                                         <SliderTrack>
                                             <SliderFilledTrack />
                                         </SliderTrack>
@@ -110,14 +133,27 @@ const CreateShipmentPage: React.FC = () => {
                                 <FilterBox title='Requirements'>
                                     <CheckboxGroup colorScheme='blue' defaultValue={['naruto', 'kakashi']}>
                                         <Stack spacing={[1, 5]}>
-                                            <Checkbox value='naruto'>Naruto</Checkbox>
+                                            <Checkbox isChecked={isChecked('oversize')}
+                                                onChange={() => onCheckBoxClick('oversize')}
+                                                value='oversize'
+                                            >
+                                                Oversized Loads
+                                            </Checkbox>
                                             <Checkbox value='sasuke'>Sasuke</Checkbox>
                                             <Checkbox value='kakashi'>Kakashi</Checkbox>
                                         </Stack>
                                     </CheckboxGroup>
                                 </FilterBox>
                                 <Box mt='20px'>
-                                    <Button isDisabled={true} w='100%' colorScheme='green' size='lg'>Next</Button>
+                                    <Button
+                                        isDisabled={false}
+                                        w='100%'
+                                        colorScheme='green'
+                                        size='lg'
+                                        onClick={e => setPage(2)}
+                                    >
+                                        Next
+                                    </Button>
                                 </Box>
                             </Flex>
                             <Spacer />
@@ -135,7 +171,12 @@ const CreateShipmentPage: React.FC = () => {
                 {page == 2 && <Box>
                     <Heading mt='20px'>
                         <Flex gap='4'>
-                            <IconButton icon={<ArrowBackIcon />} size='xl' aria-label='Confirmation' />
+                            <IconButton
+                                icon={<ArrowBackIcon />}
+                                size='xl'
+                                aria-label='Confirmation'
+                                onClick={e => setPage(1)}
+                            />
                             <Text>Confirmation</Text>
                         </Flex>
                     </Heading>
@@ -182,6 +223,5 @@ const CreateShipmentPage: React.FC = () => {
         </Grid>
     </div>
 }
-
 
 export default CreateShipmentPage;
