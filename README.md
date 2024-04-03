@@ -3,6 +3,7 @@
 ## Tech Stack
 - Node18
 - Chakra UI
+- [Create React App](https://github.com/facebook/create-react-app).
 
 ## Steps to run the Frontend
 ### Step 1
@@ -14,7 +15,4 @@ Run `npm install`
 
 ### Step 3
 Run `npm start`
-
-This project was bootstrapped with
-[Create React App](https://github.com/facebook/create-react-app).
 
