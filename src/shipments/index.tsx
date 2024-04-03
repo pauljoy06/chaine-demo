@@ -6,9 +6,6 @@ import {
     GridItem,
     Heading,
 
-    Input,
-    InputGroup,
-    InputLeftAddon,
     Button,
     Flex,
     Spacer,
@@ -20,7 +17,6 @@ import {
     Thead,
     Tr,
 } from "@chakra-ui/react"
-import { SearchIcon } from "@chakra-ui/icons"
 
 import Sidebar from "../components/sidebar"
 import { Link } from "react-router-dom"
