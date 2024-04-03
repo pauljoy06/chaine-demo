@@ -1,7 +1,7 @@
-import { Box, Icon } from "@chakra-ui/react";
+import { Box, Icon, Text } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 
-import { RatingsProps } from "../interfaces";
+import { KeyValueProps, RatingsProps } from "../interfaces";
 
 const Ratings: React.FC<RatingsProps> = ({rating, maxRating = 5}) => {
     return <Box>
@@ -13,6 +13,14 @@ const Ratings: React.FC<RatingsProps> = ({rating, maxRating = 5}) => {
     </Box>
 };
 
+const KeyValueBox: React.FC<KeyValueProps> = ({ title, value}) => {
+    return <Box className='key-value-box'>
+        <Text fontSize='xs' color='gray.400'>{title}</Text>
+        <Text color='black.100'>{value}</Text>
+    </Box>
+}
+
 export {
     Ratings,
+    KeyValueBox,
 }
