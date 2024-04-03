@@ -47,7 +47,7 @@ const CreateShipmentPage: React.FC = () => {
     const [starRating, setStarRating] = useState<number>(0);
     
     const [carriers, setCarriers] = useState<Carrier[]>([]);
-    const [selectedCarrier, setSelectedCarrier] = useState<number | null>(null);
+    const [selectedCarrier, setSelectedCarrier] = useState<Carrier | null>(null);
     const onCheckBoxClick = (value: string): void => {
         let index = specialRequirements.indexOf(value);
         if(index != -1) {
@@ -64,6 +64,18 @@ const CreateShipmentPage: React.FC = () => {
 
     const isChecked = (value: string): boolean => {
         return specialRequirements.includes(value)
+    }
+
+    const isCardSelected = (id: number): boolean => {
+        return id === selectedCarrier?.id;
+    }
+
+    const onCardClick = (carrier: Carrier): void => {
+        if(selectedCarrier?.id === carrier.id) {
+            setSelectedCarrier(null);
+        } else {
+            setSelectedCarrier(carrier);
+        }
     }
 
     useEffect(() => {
@@ -184,10 +196,18 @@ const CreateShipmentPage: React.FC = () => {
                             <Spacer />
                             <Box className='carrier-results' p='45px' w='85%' bg='white' borderRadius='10px'>
                                 <Heading as='h1' size='md'>Carriers</Heading>
-                                <Flex className='carriers' gap='5' mt='30px'>
-                                    <CarrierCard title='Transit Logistics' />
-                                    <CarrierCard title='Transit Logistics' />
-                                    <CarrierCard title='Transit Logistics' />
+                                <Flex className='carriers' wrap='wrap' gap='7' mt='30px'>
+                                    {carriers.map(carrier => <CarrierCard
+                                        name={carrier.name}
+                                        rating={carrier.rating}
+                                        onTimeDeliveryPercentage={carrier.onTimeDeliveryPercentage}
+                                        cost={carrier.cost}
+                                        specialRequirements={carrier.specialRequirements}
+                                        availability={carrier.availability}
+                                        isSelected={isCardSelected(carrier.id)}
+                                        onClick={onCardClick}
+                                        carrier={carrier}
+                                    />)}                                    
                                 </Flex>
                             </Box>
                         </Flex>

@@ -33,22 +33,46 @@ const FilterBox: React.FC<FilterBoxProps> = ({ title, children }) => {
     </Box>
 }
 
-const CarrierCard: React.FC<CarrierCardProps> = ({ title }) => {
-    return <Card maxW='430px' borderRadius='20px'>
+const CarrierCard: React.FC<CarrierCardProps> = ({ name,
+    rating,
+    onTimeDeliveryPercentage,
+    cost,
+    specialRequirements,
+    availability,
+    isSelected,
+    onClick,
+    carrier,
+}) => {
+    let requirementString: string = 'NA'
+    if (specialRequirements.length > 0 ) {
+        requirementString = specialRequirements.join(', ');
+    }
+
+    return <Card maxW='430px' minW='390px' borderRadius='20px'
+        colorScheme='green'
+        border={`${isSelected ? '1px' : '0'}`}
+        borderColor={`${isSelected ? 'green' : ''}`}
+        onClick={() => onClick(carrier)}
+    >
         <CardHeader>
-            <Heading as='h1' size='md'>{title}</Heading> 
+            <Heading as='h1' size='md'>{name}</Heading> 
         </CardHeader>
         <CardBody>
             <Flex gap='3'>
-                <KeyValueBox title='On-time delivery %' value='90%' />
-                <KeyValueBox title='On-time delivery %' value='90%' />
-                <KeyValueBox title='On-time delivery %' value='90%' />
+                <KeyValueBox
+                    title='On-time delivery %'
+                    value={`${onTimeDeliveryPercentage * 100}`}
+                />
+                <Spacer />
+                <KeyValueBox title='Special' value={requirementString} />
+                <Spacer />
+                <KeyValueBox title='Cost' value={`${cost}`} />
             </Flex>
         </CardBody>
             <Divider mt='20px' borderColor='gray.300' />
         <CardFooter>
             <Flex w='100%'>
-                <Tag
+                {availability && <Tag
                     size='lg' key='sm'
                     borderRadius='full'
                     variant='solid'
@@ -56,14 +80,23 @@ const CarrierCard: React.FC<CarrierCardProps> = ({ title }) => {
                     color='#29945a'
                 >
                     <TagLabel>Available</TagLabel>
-                </Tag> 
+                </Tag>}
+                {!availability && <Tag
+                    size='lg' key='sm'
+                    borderRadius='full'
+                    variant='solid'
+                    bg='red.100'
+                    color='red.400'
+                >
+                    <TagLabel>Not Available</TagLabel>
+                </Tag>}
                 <Spacer />
                 <Flex align='center' gap='2'>
                     <Icon
                         as={StarIcon}
                         color='yellow.400'
                     />
-                    <Text>4.8</Text>
+                    <Text>{rating}</Text>
                 </Flex>
             </Flex>
         </CardFooter>
